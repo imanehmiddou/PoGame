@@ -4,6 +4,40 @@ from constants import *
 from screen import create_screen, update_screen
 from world import create_world
 
+#Ajouter le joueur 
+
+
+def player (x, y):
+    screen.blit(player, (x,y))  
+    player = pygame.image.load('jeunechimpanzé')
+    
+#Prendre ou poser les objets 
+def transfer_item(source, target, item):
+    if item in source:
+        source.remove(item)
+        target.append(item)
+    return source, target
+
+
+def run_game(available_items):
+    ground = ["jumelles", "couteau", "banane"]
+    inventory = ["bateau", "bombe", "fleur", "moto"]
+    while True:
+        print("sol :", ground, "inventaire :", inventory)
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                break
+            elif event.type == pygame.KEYDOWN:
+                if event.type == pygame.K_RETURN:
+                    inventory, ground = transfer_item(inventory, ground, ordre[1])
+                elif event.type == pzgame.K_SPACE:
+                    ground, inventory = transfer_item(ground, inventory, ordre[1]) 
+                    
+
+
+if __name__ == "__main__":
+    run_game(["jumelles", "couteau", "banane", "bateau", "bombe", "fleur", "moto"])
+
 
 def main():
     # Création du "monde" tel que nous le définissons
@@ -14,6 +48,7 @@ def main():
     clock = pygame.time.Clock()
     # Coordonnées [x, y] du joueur
     player = [0, 0]
+
 
     # Les variables qui nous permettent de savoir si notre programme est en cours d'exécution ou s'il doit se terminer.
     alive = True
@@ -27,23 +62,27 @@ def main():
     while alive and running:
         # À chaque itération, on demande à pygame quels "évènements" se sont passés. Ces évènements sont l'interface
         # qui permet d'interragir avec l'extérieur du programme, et en particulier l'utilisateur (qui utilisera son
-        # clavier, par exemple).
+        # clavier.
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                # L'utilisateur souhaite fermer la fenêtre ou quitter par un autre moyen (menus ...).
-                # À la prochaine itération de notre boucle principale, la condition sera fausse et le programme va se
-                # terminer.
-                running = False
+                break
             elif event.type == pygame.KEYDOWN:
-                # Une touche du clavier a été pressée.
-                if event.key == pygame.K_q:
-                    # L'utilisateur a appuyé sur "Q", pour Quitter.
-                    # À la prochaine itération de notre boucle principale, la condition sera fausse et le programme va
-                    # se terminer.
-                    running = False
-            elif event.type == pygame.KEYUP:
-                # Une touche du clavier a été relachée.
-                pass
+                if event.type == pygame.K_DOWN:
+                    if  position[1] < HEIGHT - 1:
+                        position = (position[0], position[1] + 1)
+                
+                elif event.type == pygame.K_UP:
+                    if position[1] > 0:
+                        position = (position[0], position[1] - 1)
+
+                elif event.type == pygame.K_LEFT:
+                    if position[0] > 0:
+                        position = (position[0] - 1, position[1])
+
+                elif event.type == pygame.K_RIGHT:
+                    if position[0] < WIDTH - 1:
+                        position = (position[0] + 1, position[1])
+            
 
         # On met à jour ce qu'on affiche sur l'écran, et on "pousse" l'aiguille de l'horloge d'un pas.
         update_screen(screen, background, world, player)
